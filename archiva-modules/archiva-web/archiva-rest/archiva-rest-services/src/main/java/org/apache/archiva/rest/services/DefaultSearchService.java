@@ -19,6 +19,8 @@ package org.apache.archiva.rest.services;
  * under the License.
  */
 
+import static org.junit.Assert.*;
+
 import org.apache.archiva.indexer.search.RepositorySearch;
 import org.apache.archiva.indexer.search.RepositorySearchException;
 import org.apache.archiva.indexer.search.SearchFields;
@@ -34,9 +36,12 @@ import org.apache.archiva.rest.api.services.ArchivaRestServiceException;
 import org.apache.archiva.rest.api.services.SearchService;
 import org.apache.commons.collections.ListUtils;
 import org.apache.commons.lang.StringUtils;
+import org.junit.Before;
+import org.junit.Test;
 import org.springframework.stereotype.Service;
 
 import javax.inject.Inject;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -217,21 +222,52 @@ public class DefaultSearchService
             {
                 for ( String version : hit.getVersions() )
                 {
+                    if ( StringUtils.isBlank( version ) )
+                        continue;
 
-                    Artifact versionned = getModelMapper().map( hit, Artifact.class );
+                    Artifact versionned = getArtifactFromHit(hit);
+                    versionned.setVersion( version );
+                    versionned.setUrl( getArtifactUrl( versionned ) );
 
-                    if ( StringUtils.isNotBlank( version ) )
-                    {
-                        versionned.setVersion( version );
-                        versionned.setUrl( getArtifactUrl( versionned ) );
-
-                        artifacts.add( versionned );
-
-                    }
+                    artifacts.add( versionned );
+                    break;
                 }
             }
         }
         return artifacts;
+    }
+
+    private Artifact getArtifactFromHit(SearchResultHit hit)
+    {
+        Artifact result = new Artifact();
+        result.setArtifactId(hit.getArtifactId());
+        result.setBundleDescription(hit.getBundleDescription());
+        result.setBundleDocUrl(hit.getBundleDocUrl());
+        result.setBundleExportPackage(hit.getBundleExportPackage());
+        result.setBundleExportService(hit.getBundleExportService());
+        result.setBundleImportPackage(hit.getBundleImportPackage());
+        result.setBundleLicense(hit.getBundleLicense());
+        result.setBundleName(hit.getBundleName());
+        result.setBundleRequireBundle(hit.getBundleRequireBundle());
+        result.setBundleSymbolicName(hit.getBundleSymbolicName());
+        result.setBundleVersion(hit.getBundleVersion());
+        result.setClassifier(hit.getClassifier());
+        result.setContext(hit.getContext());
+        result.setFileExtension(hit.getFileExtension());
+        result.setGoals(hit.getGoals());
+        result.setGroupId(hit.getGroupId());
+        result.setId(null);
+        result.setPackaging(hit.getPackaging());
+        result.setPath(null);
+        result.setPrefix(hit.getPrefix());
+        result.setRepositoryId(hit.getRepositoryId());
+        result.setScope(null);
+        result.setSize(null);
+        result.setType(hit.getType());
+        
+        // setVersion and setURL are set in the calling method
+        
+        return result;
     }
 
 
