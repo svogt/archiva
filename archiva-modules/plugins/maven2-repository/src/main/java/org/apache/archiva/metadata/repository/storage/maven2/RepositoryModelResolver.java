@@ -209,7 +209,8 @@ public class RepositoryModelResolver
 
     public ModelResolver newCopy()
     {
-        return new RepositoryModelResolver( basedir, pathTranslator );
+        return new RepositoryModelResolver( managedRepository,  pathTranslator, wagonFactory, remoteRepositories, 
+                                            networkProxyMap, targetRepository );
     }
 
     // FIXME: we need to do some refactoring, we cannot re-use the proxy components of archiva-proxy in maven2-repository
