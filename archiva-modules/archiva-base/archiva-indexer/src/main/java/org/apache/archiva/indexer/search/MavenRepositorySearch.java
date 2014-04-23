@@ -263,6 +263,7 @@ public class MavenRepositorySearch
             FlatSearchRequest request = new FlatSearchRequest( q );
 
             request.setContexts( getIndexingContexts( indexingContextIds ) );
+            request.setCount(limits.getPageSize()*(Math.max(1, limits.getSelectedPage())));
 
             FlatSearchResponse response = indexer.searchFlat( request );
 
